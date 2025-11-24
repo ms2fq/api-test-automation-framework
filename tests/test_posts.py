@@ -58,6 +58,7 @@ class TestPosts:
         post_user_id = 123
         response = self.client.update_post(post_id=post_id, title=post_title, body=post_body, userId=post_user_id)
         assert response.status_code == 200, f"Update Post Status Code: {response.status_code}"
+        print(f"Update Post Status Code: {response.status_code}")
         post = response.json()
         assert post["userId"] == post_user_id, f'User ID Expected: {post_user_id}, User ID Returned: {post["userId"]}'
         print(f'User ID Expected: {post_user_id}, User ID Returned: {post["userId"]}')
@@ -67,3 +68,42 @@ class TestPosts:
         print(f'Body Expected: {post_body}, Body Returned: {post["body"]}')
         assert post["id"] == post_id, f'Post ID Expected: {post_id}, Post ID Returned: {post["id"]}'
         print(f'Post ID Expected: {post_id}, Post ID Returned: {post["id"]}')
+
+    def test_partial_update_post(self):
+        now = datetime.now().ctime()
+        post_id = 1
+        post_title = f"Partial Update Title {now}"
+        post_user_id = 123
+        response = self.client.update_post(post_id=post_id, title=post_title, userId=post_user_id)
+        assert response.status_code == 200, f"Partial Update Post Status Code: {response.status_code}"
+        print(f"Partial Update Post Status Code: {response.status_code}")
+        post = response.json()
+        assert post["userId"] == post_user_id, f'User ID Expected: {post_user_id}, User ID Returned: {post["userId"]}'
+        print(f'User ID Expected: {post_user_id}, User ID Returned: {post["userId"]}')
+        assert post["title"] == post_title, f'Title Expected: {post_title}, Title Returned: {post["title"]}'
+        print(f'Title Expected: {post_title}, Title Returned: {post["title"]}')
+        assert post["id"] == post_id, f'Post ID Expected: {post_id}, Post ID Returned: {post["id"]}'
+        print(f'Post ID Expected: {post_id}, Post ID Returned: {post["id"]}')
+    
+    def test_delete_post(self):
+        post_id = 1
+        response = self.client.delete_post(post_id)
+        assert response.status_code == 200, f"Delete Post Status Code: {response.status_code}"
+        print(f"Delete Post Status Code: {response.status_code}")
+
+    def test_get_post_comments(self):
+        post_id = 1
+        response = self.client.get_post_comments(post_id)
+        assert response.status_code == 200, f"Get Post Comments Status Code: {response.status_code}"
+        print(f"Get Post Comments Status Code: {response.status_code}")
+        comments = response.json()
+        assert len(comments) > 0, f"Get All comments Length Greater Than 0: {len(comments) > 0}"
+        print(f"Get All comments Length Greater Than 0: {len(comments) > 0}")
+        first_comment = comments[0]
+        assert "postId" in first_comment
+        assert first_comment["postId"] == post_id, f"First Comment Post ID: {first_comment["postId"]}, Expected Post ID: {post_id}"
+        print(f"First Comment Post ID: {first_comment["postId"]}, Expected Post ID: {post_id}")
+        assert "id" in first_comment
+        assert "name" in first_comment
+        assert "email" in first_comment
+        assert "body" in first_comment
