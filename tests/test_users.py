@@ -1,6 +1,9 @@
 import pytest
 from utils.users_client import UsersClient
 from datetime import datetime
+import logging
+
+logger = logging.getLogger(__name__)
 
 class TestUsers:
     @pytest.fixture(autouse=True)
@@ -10,10 +13,10 @@ class TestUsers:
     def test_get_all_users(self):
         response = self.client.get_all_users()
         assert response.status_code == 200, f"Get All Users Response Code: {response.status_code}"
-        print(f"Get All Users Response Code: {response.status_code}")
+        logger.info(f"Get All Users Response Code: {response.status_code}")
         users = response.json()
         assert len(users) > 0, f"Get All Users Length Greater Than 0: {len(users) > 0}"
-        print(f"Get All Users Length Greater Than 0: {len(users) > 0}")
+        logger.info(f"Get All Users Length Greater Than 0: {len(users) > 0}")
         first_user = users[0]
         assert "id" in first_user
         assert "name" in first_user
@@ -41,11 +44,11 @@ class TestUsers:
         id = 1
         response = self.client.get_users_by_id(id)
         assert response.status_code == 200, f"Get Users By ID Response Code: {response.status_code}"
-        print(f"Get Users By ID Response Code: {response.status_code}")
+        logger.info(f"Get Users By ID Response Code: {response.status_code}")
         user = response.json()
         assert "id" in user
         assert user["id"] == id, f"ID Requested: {id}, Username returned is: {user["id"]}"
-        print(f"ID Requested: {id}, Username returned is: {user["id"]}")
+        logger.info(f"ID Requested: {id}, Username returned is: {user["id"]}")
         assert "name" in user
         assert "username" in user
         assert "email" in user
@@ -71,13 +74,13 @@ class TestUsers:
         id = -1
         response = self.client.get_users_by_id(id)
         assert response.status_code == 404, f"Get Users By ID Response Code: {response.status_code}"
-        print(f"Get Users By ID Response Code: {response.status_code}")
+        logger.info(f"Get Users By ID Response Code: {response.status_code}")
 
     def test_get_users_by_id_invalid_string_id(self):
         id = "abcd"
         response = self.client.get_users_by_id(id)
         assert response.status_code == 404, f"Get Users By ID Response Code: {response.status_code}"
-        print(f"Get Users By ID Response Code: {response.status_code}")
+        logger.info(f"Get Users By ID Response Code: {response.status_code}")
 
     def test_create_user_valid(self):
         now = datetime.now().ctime()
@@ -86,14 +89,14 @@ class TestUsers:
         email = "abcd123@def.com"
         response = self.client.create_user(name, username, email)
         assert response.status_code == 201, f"Create User Response code: {response.status_code}"
-        print(f"Create User Response code: {response.status_code}")
+        logger.info(f"Create User Response code: {response.status_code}")
         user = response.json()
         assert user["username"] == username, f'Username Expected: {username}, Username Returned: {user["username"]}'
-        print(f'Username Expected: {username}, Username Returned: {user["username"]}')
+        logger.info(f'Username Expected: {username}, Username Returned: {user["username"]}')
         assert user["name"] == name, f'Name Expected: {name}, Name Returned: {user["name"]}'
-        print(f'Name Expected: {name}, Name Returned: {user["name"]}')
+        logger.info(f'Name Expected: {name}, Name Returned: {user["name"]}')
         assert user["email"] == email, f'Email Expected: {email}, Email Returned: {user["email"]}'
-        print(f'Email Expected: {email}, Email Returned: {user["email"]}')
+        logger.info(f'Email Expected: {email}, Email Returned: {user["email"]}')
 
     def test_update_user(self):
         now = datetime.now().ctime()
@@ -102,41 +105,41 @@ class TestUsers:
         email = "a12bc@def.com"
         response = self.client.update_user(user_id=1, username=username, email=email, name=name)
         assert response.status_code == 200, f"Update User Status Code: {response.status_code}"
-        print(f"Update User Status Code: {response.status_code}")
+        logger.info(f"Update User Status Code: {response.status_code}")
         user = response.json()
         assert user["username"] == username, f'Username Expected: {username}, Username Returned: {user["username"]}'
-        print(f'Username Expected: {username}, Username Returned: {user["username"]}')
+        logger.info(f'Username Expected: {username}, Username Returned: {user["username"]}')
         assert user["name"] == name, f'Name Expected: {name}, Name Returned: {user["name"]}'
-        print(f'Name Expected: {name}, Name Returned: {user["name"]}')
+        logger.info(f'Name Expected: {name}, Name Returned: {user["name"]}')
         assert user["email"] == email, f'Email Expected: {email}, Email Returned: {user["email"]}'
-        print(f'Email Expected: {email}, Email Returned: {user["email"]}')
+        logger.info(f'Email Expected: {email}, Email Returned: {user["email"]}')
 
     def test_partial_update_user(self):
         username = "Partial Update Username"
         name = f"Partial Update Name"
         response = self.client.update_user(user_id=1, username=username, name=name)
         assert response.status_code == 200, f"Partial Update User Status Code: {response.status_code}"
-        print(f"Partial Update User Status Code: {response.status_code}")
+        logger.info(f"Partial Update User Status Code: {response.status_code}")
         user = response.json()
         assert user["username"] == username, f'Username Expected: {username}, Username Returned: {user["username"]}'
-        print(f'Username Expected: {username}, Username Returned: {user["username"]}')
+        logger.info(f'Username Expected: {username}, Username Returned: {user["username"]}')
         assert user["name"] == name, f'Name Expected: {name}, Name Returned: {user["name"]}'
-        print(f'Name Expected: {name}, Name Returned: {user["name"]}')
+        logger.info(f'Name Expected: {name}, Name Returned: {user["name"]}')
     
     def test_delete_user_valid_id(self):
         user_id = 1
         response = self.client.delete_user(user_id)
         assert response.status_code == 200, f"Delete User Status Code: {response.status_code}"
-        print(f"Delete User Status Code: {response.status_code}")
+        logger.info(f"Delete User Status Code: {response.status_code}")
 
     def test_get_user_posts(self):
         user_id = 1
         response = self.client.get_user_posts(user_id)
         assert response.status_code == 200, f"Get user posts status code: {response.status_code}"
-        print(f"Get user posts status code: {response.status_code}")
+        logger.info(f"Get user posts status code: {response.status_code}")
         posts = response.json()
         assert len(posts) > 0, f"Posts Returned Length Greater Than 0: {len(posts) > 0}"
-        print(f"Posts Returned Length Greater Than 0: {len(posts) > 0}")
+        logger.info(f"Posts Returned Length Greater Than 0: {len(posts) > 0}")
         first_post = posts[0]
         assert "userId" in first_post
         assert "title" in first_post
@@ -147,10 +150,10 @@ class TestUsers:
         user_id = 1
         response = self.client.get_user_todos(user_id)
         assert response.status_code == 200, f"Get user todos status code: {response.status_code}"
-        print(f"Get user toods status code: {response.status_code}")
+        logger.info(f"Get user toods status code: {response.status_code}")
         todos = response.json()
         assert len(todos) > 0, f"ToDos Returned Length Greater Than 0: {len(todos) > 0}"
-        print(f"ToDos Returned Length Greater Than 0: {len(todos) > 0}")
+        logger.info(f"ToDos Returned Length Greater Than 0: {len(todos) > 0}")
         first_todo = todos[0]
         assert "userId" in first_todo
         assert "title" in first_todo
