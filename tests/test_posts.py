@@ -1,7 +1,6 @@
 import pytest
 from utils.posts_client import PostsClient
 from datetime import datetime
-import json
 
 class TestPosts:
     @pytest.fixture(autouse=True)
@@ -21,7 +20,7 @@ class TestPosts:
         assert "body" in first_post
         assert "id" in first_post
     
-    def test_get_posts_by_id(self):
+    def test_get_posts_by_id_valid(self):
         id = 1
         response = self.client.get_posts_by_id(id)
         assert response.status_code == 200, f"Get Posts By ID Response Code: {response.status_code}"
@@ -34,7 +33,19 @@ class TestPosts:
         assert post["id"] == id, f"ID Requested: {id}, Post ID returned is: {post["id"]}"
         print(f"ID Requested: {id}, Post ID returned is: {post["id"]}")
 
-    def test_create_post(self):
+    def test_get_posts_by_id_invalid_negative_id(self):
+        id = -1
+        response = self.client.get_posts_by_id(id)
+        assert response.status_code == 404, f"Get Posts By ID Response Code: {response.status_code}"
+        print(f"Get Posts By ID Response Code: {response.status_code}")
+
+    def test_get_posts_by_id_invalid_string_id(self):
+        id = "abcd"
+        response = self.client.get_posts_by_id(id)
+        assert response.status_code == 404, f"Get Posts By ID Response Code: {response.status_code}"
+        print(f"Get Posts By ID Response Code: {response.status_code}")
+
+    def test_create_post_valid(self):
         now = datetime.now().ctime()
         title = f"Test Title {now}"
         body = f"Test Body {now}"
@@ -85,13 +96,13 @@ class TestPosts:
         assert post["id"] == post_id, f'Post ID Expected: {post_id}, Post ID Returned: {post["id"]}'
         print(f'Post ID Expected: {post_id}, Post ID Returned: {post["id"]}')
     
-    def test_delete_post(self):
+    def test_delete_post_valid_id(self):
         post_id = 1
         response = self.client.delete_post(post_id)
         assert response.status_code == 200, f"Delete Post Status Code: {response.status_code}"
         print(f"Delete Post Status Code: {response.status_code}")
 
-    def test_get_post_comments(self):
+    def test_get_post_comments_valid(self):
         post_id = 1
         response = self.client.get_post_comments(post_id)
         assert response.status_code == 200, f"Get Post Comments Status Code: {response.status_code}"
