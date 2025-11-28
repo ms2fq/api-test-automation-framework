@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  tests:
+    build: .
+    image: api-test-framework:latest
+    container_name: api-tests
+    volumes:
+      # Mount reports and logs so they persist outside container
+      - ./reports:/app/reports
+      - ./logs:/app/logs
+    environment:
+      # Can override config here if needed
+      - BASE_URL=https://jsonplaceholder.typicode.com
+      - TIMEOUT=10
