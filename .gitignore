@@ -32,6 +32,8 @@ pip-delete-this-directory.txt
 .tox/
 .pytest_cache/
 htmlcov/
+reports/
+logs/
 
 # Virtual environment
 .venv/
