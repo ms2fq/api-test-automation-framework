@@ -141,7 +141,7 @@ This project showcases capabilities relevant to:
 
 ## Contact
 
-**[Michael Santucci]**
+**Michael Santucci**
 - LinkedIn: [santuccim](https://www.linkedin.com/in/santuccim/)
 
 ---
